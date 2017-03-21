@@ -33,6 +33,7 @@ import org.apache.jena.rdf.model.Model;
 
 import de.citec.sc.lemon.core.LexicalEntry;
 import de.citec.sc.lemon.core.Lexicon;
+import de.citec.sc.lemon.core.OwlClass;
 import de.citec.sc.lemon.core.Preposition;
 import de.citec.sc.lemon.core.Provenance;
 import de.citec.sc.lemon.core.Reference;
@@ -255,6 +256,9 @@ public class LexiconSerialization {
                                     }
 
                                 }
+                            }
+                            else if(ref instanceof de.citec.sc.lemon.core.OwlClass){
+                                // TODO: Serialize OwlClass
                             }
                    }
 			

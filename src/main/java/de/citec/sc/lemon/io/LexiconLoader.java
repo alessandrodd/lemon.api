@@ -41,11 +41,13 @@ import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.StmtIterator;
 import org.apache.jena.vocabulary.RDF;
+import org.apache.jena.vocabulary.RDFS;
 
 import de.citec.sc.lemon.core.Language;
 
 import de.citec.sc.lemon.core.LexicalEntryWithResources;
 import de.citec.sc.lemon.core.LexiconWithResources;
+import de.citec.sc.lemon.core.OwlClass;
 import de.citec.sc.lemon.core.Preposition;
 import de.citec.sc.lemon.core.Provenance;
 import de.citec.sc.lemon.core.Restriction;
@@ -58,6 +60,7 @@ import de.citec.sc.lemon.core.SyntacticBehaviour;
 import de.citec.sc.lemon.vocabularies.DBLEXIPEDIA;
 import de.citec.sc.lemon.vocabularies.LEMON;
 import de.citec.sc.lemon.vocabularies.LEXINFO;
+import de.citec.sc.lemon.vocabularies.OILS;
 import de.citec.sc.lemon.vocabularies.OWL;
 import de.citec.sc.lemon.vocabularies.PROVO;
 import java.text.SimpleDateFormat;
@@ -279,7 +282,7 @@ public class LexiconLoader {
 
 	private static Resource getReference(Resource sense, Model model) {
 
-            Resource uri; 
+            Resource uri;
             
             try {
                 uri = (Resource) sense.getProperty(LEMON.reference).getObject();
@@ -458,13 +461,25 @@ public class LexiconLoader {
                 // check whether it's a restriction class
                 String property = getPropertyObject(reference,OWL.onProperty);
                 String value    = getPropertyObject(reference,OWL.hasValue);
+                
+                // check whether is an owl:Class
+                String subClassOf = getPropertyObject(reference, RDFS.subClassOf);
+                String boundTo = getPropertyObject(reference, OILS.boundTo);
+                String degree = getPropertyObject(reference, OILS.degree);
 
                 if (property != null && value != null) {
                     sense.setReference(new Restriction(reference.toString(),value,property));
                 }
+                // degree is optional
+                else if(subClassOf!=null && boundTo!=null){
+                	sense.setReference(new OwlClass(reference.toString(), subClassOf, boundTo, degree));
+                }
                 else {
                     sense.setReference(new SimpleReference(reference.toString()));
                 }
+            }
+            else{
+            	System.out.println("Null reference for "+rdf_sense);
             }
             List<SenseArgument> sense_arguments = getSenseArguments(rdf_sense,model);
             HashSet<String> sense_argument_values = new HashSet<String>();

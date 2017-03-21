@@ -127,6 +127,9 @@ public class CSV_LexiconSerialization {
                             uri = reference.getProperty();
                             restrictionClass = reference.getValue();
                         }
+                        else if (ref instanceof de.citec.sc.lemon.core.OwlClass){
+                        	//TODO: serialize OwlClass
+                        }
                         else if(ref instanceof de.citec.sc.lemon.core.SimpleReference){
                             SimpleReference reference = (SimpleReference) ref;
                             uri = reference.getURI();
